@@ -5,6 +5,7 @@ const ErrorHandler = require("../utils/errorHandler");
 const sendToken = require("../utils/jwt");
 const crypto = require("crypto");
 
+//register user {{base_url}}/api/v1/register POST
 exports.registerUser = catchAsyncError(async (req, res, next) => {
   const { name, email, password, avatar } = req.body;
   const user = await User.create({
@@ -19,6 +20,7 @@ exports.registerUser = catchAsyncError(async (req, res, next) => {
   sendToken(user, 201, res);
 });
 
+//login user {{base_url}}/api/v1/login POST
 exports.loginUser = catchAsyncError(async (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -37,6 +39,7 @@ exports.loginUser = catchAsyncError(async (req, res, next) => {
   sendToken(user, 201, res);
 });
 
+//logout user {{base_url}}/api/v1/logout POST
 exports.logout = (req, res, next) => {
   res
     .cookie("token", "", {
@@ -50,6 +53,7 @@ exports.logout = (req, res, next) => {
     });
 };
 
+//forgot password {{base_url}}/api/v1/password/forgot POST
 exports.forgotPassword = catchAsyncError(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });
   if (!user) {
@@ -86,6 +90,7 @@ exports.forgotPassword = catchAsyncError(async (req, res, next) => {
   }
 });
 
+// reset password {{base_url}}/api/v1/password/reset/:token POST
 exports.resetPassword = catchAsyncError(async (req, res, next) => {
   const resetPasswordToken = crypto
     .createHash("sha256")
@@ -114,4 +119,102 @@ exports.resetPassword = catchAsyncError(async (req, res, next) => {
   await user.save({ validateBeforeSave: false });
 
   sendToken(user, 201, res);
+});
+
+//get user profile {{base_url}}/api/v1/myprofile GET
+exports.getUserProfile = catchAsyncError(async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+  res.status(200).json({
+    success: true,
+    user,
+  });
+});
+
+// change password {{base_url}}/api/v1/password/change PUT
+exports.changePassword = catchAsyncError(async (req, res, next) => {
+  const user = await User.findById(req.user.id).select("+password");
+  const password = req.body.oldPassword;
+
+  // check old password
+  if (!(await user.isValidPassword(password))) {
+    return next(new ErrorHandler("Old password is incorrect", 401));
+  }
+  // assigning new password
+  user.password = req.body.password;
+  await user.save();
+  res.status(200).json({
+    success: true,
+  });
+});
+
+//update profile
+exports.updateProfile = catchAsyncError(async (req, res, next) => {
+  const newUserData = {
+    name: req.body.name,
+    email: req.body.email,
+  };
+  const user = await User.findByIdAndUpdate(req.user.id, newUserData, {
+    new: true,
+    runValidators: true,
+  });
+
+  res.status(200).json({
+    success: true,
+    user,
+  });
+});
+
+//Admin: get All user  {{base_url}}/api/v1/admin/users
+exports.getAllUser = catchAsyncError(async (req, res, next) => {
+  const users = await User.find();
+  res.status(200).json({
+    success: true,
+    users,
+  });
+});
+
+//Admin: get specific user  {{base_url}}/api/v1/admin/user/:id
+exports.getUser = catchAsyncError(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    return next(
+      new ErrorHandler(`user not found with this id: ${req.params.id}`)
+    );
+  }
+  res.status(200).json({
+    success: true,
+    user,
+  });
+});
+
+//Admin: Update specific user  {{base_url}}/api/v1/admin/user/:id
+exports.updateUser = catchAsyncError(async (req, res, next) => {
+  const newUserData = {
+    name: req.body.name,
+    email: req.body.email,
+    role: req.body.role,
+  };
+  const user = await User.findByIdAndUpdate(req.params.id, newUserData, {
+    new: true,
+    runValidators: true,
+  });
+
+  res.status(200).json({
+    success: true,
+    user,
+  });
+});
+
+//Admin: Delete User {{base_url}}/api/v1/admin/user/:id
+exports.deleteUser = catchAsyncError(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    return next(
+      new ErrorHandler(`user not found with this id: ${req.params.id}`)
+    );
+  }
+  await user.deleteOne();
+  res.status(200).json({
+    success: true,
+  });
 });
