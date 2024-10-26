@@ -1,0 +1,9 @@
+npm i 
+
+axios 
+react-helmet-async  - title
+redux
+react-redux
+redux-thunk - make delay actions
+redux-devtools-extension - redux checking
+react-router-dom

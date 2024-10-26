@@ -16,7 +16,7 @@ const {
 
 const router = express.Router();
 
-router.route("/products").get(isAuthenticatedUser, getProducts);
+router.route("/products").get( getProducts);
 
 router
   .route("/admin/product/new")

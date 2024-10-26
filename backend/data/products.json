@@ -6,10 +6,10 @@
     "ratings": 4.5,
     "images": [
       {
-        "image": "/images/products/1.jpg"
+        "image": "/assets/products/1.jpg"
       },
       {
-        "image": "/images/products/2.jpg"
+        "image": "/assets/products/2.jpg"
       }
     ],
     "category": "Mobile Phones",
@@ -25,7 +25,7 @@
     "ratings": 3.5,
     "images": [
       {
-        "image": "/images/products/2.jpg"
+        "image": "assets/products/2.jpg"
       }
     ],
     "category": "Accessories",
@@ -41,7 +41,7 @@
     "ratings": 2,
     "images": [
       {
-        "image": "/images/products/3.jpg"
+        "image": "assets/products/3.jpg"
       }
     ],
     "category": "Laptops",
@@ -57,7 +57,7 @@
     "ratings": 4,
     "images": [
       {
-        "image": "/images/products/6.jpg"
+        "image": "assets/products/4.jpg"
       }
     ],
     "category": "Laptops",
@@ -73,7 +73,7 @@
     "ratings": 5,
     "images": [
       {
-        "image": "/images/products/7.jpg"
+        "image": "assets/products/5.jpg"
       }
     ],
     "category": "Laptops",
